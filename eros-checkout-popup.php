@@ -171,6 +171,11 @@ function eros_checkout_popup() {
             <div style="margin:0;font-size:1em;line-height:1.6;">
                 <?php echo $message; ?>
             </div>
+            <button
+                onclick="document.getElementById('eros-popup-overlay').style.display='none';"
+                style="margin-top:22px;padding:10px 32px;font-size:1em;cursor:pointer;
+                       background:#333;color:#fff;border:none;border-radius:5px;font-weight:bold;"
+            >OK</button>
         </div>
     </div>
     <?php
