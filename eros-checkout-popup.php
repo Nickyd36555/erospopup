@@ -208,7 +208,7 @@ function eros_age_gate() {
     // Shared button style
     $btn = 'padding:11px 34px;font-size:1em;font-weight:bold;cursor:pointer;color:#fff;border:none;border-radius:6px;';
     ?>
-<style>#eag{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;align-items:center;justify-content:center}#eag-box{background:<?php echo $bg ?>;color:<?php echo $fg ?>;border-radius:10px;padding:40px 32px 32px;max-width:460px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.5);text-align:center}#eag-box h2{margin:0 0 14px;font-size:1.5em}#eag-box p{margin:0 0 24px;line-height:1.7;opacity:.9}#eag-btns{display:flex;gap:14px;justify-content:center}</style>
+<style>#eag{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;align-items:center;justify-content:center;padding:16px}#eag-box{background:<?php echo $bg ?>;color:<?php echo $fg ?>;border-radius:10px;padding:36px 32px 28px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.5);text-align:center}#eag-box h2,#eag-box p,#eag-box div,#eag-box a{color:<?php echo $fg ?> !important}#eag-box h2{margin:0 0 14px;font-size:1.5em}#eag-btns{display:flex;gap:14px;justify-content:center;margin-top:24px}</style>
 <div id="eag">
  <div id="eag-box">
   <?php if ( $img_url ) : ?><img src="<?php echo esc_url( $img_url ) ?>" alt="" style="max-width:120px;max-height:90px;margin:0 auto 18px;display:block;border-radius:4px"><?php endif; ?>
