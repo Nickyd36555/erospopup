@@ -214,13 +214,16 @@ function eros_age_gate() {
   <?php if ( $img_url ) : ?><img src="<?php echo esc_url( $img_url ) ?>" alt="" style="max-width:120px;max-height:90px;margin:0 auto 18px;display:block;border-radius:4px"><?php endif; ?>
   <?php if ( $title ) : ?><h2><?php echo $title ?></h2><?php endif; ?>
   <?php if ( $message ) : ?><div style="margin:0 0 24px;line-height:1.7;opacity:.9"><?php echo $message ?></div><?php endif; ?>
+  <label style="display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-size:.9em;cursor:pointer">
+   <input type="checkbox" id="eag-remember" style="width:16px;height:16px;cursor:pointer;accent-color:<?php echo $yes ?>"> Remember me for 30 days
+  </label>
   <div id="eag-btns">
    <button onclick="eagOk()" style="<?php echo $btn ?>background:<?php echo $yes ?>">Yes, I am 18+</button>
    <button onclick="location.href='<?php echo $redirect ?>'" style="<?php echo $btn ?>background:<?php echo $no ?>">No, Exit</button>
   </div>
  </div>
 </div>
-<script>(function(){function g(n){var m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');return m?m.pop():''}if(g('eros_age')==='1')document.getElementById('eag').style.display='none'})();function eagOk(){var d=new Date();d.setDate(d.getDate()+30);document.cookie='eros_age=1;expires='+d.toUTCString()+';path=/';document.getElementById('eag').style.display='none'}</script>
+<script>(function(){function g(n){var m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');return m?m.pop():''}if(g('eros_age')==='1')document.getElementById('eag').style.display='none'})();function eagOk(){if(document.getElementById('eag-remember').checked){var d=new Date();d.setDate(d.getDate()+30);document.cookie='eros_age=1;expires='+d.toUTCString()+';path=/'}document.getElementById('eag').style.display='none'}</script>
     <?php
 }
 
