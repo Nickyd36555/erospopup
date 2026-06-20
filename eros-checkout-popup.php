@@ -40,10 +40,40 @@ function eros_popup_register_settings() {
     register_setting( 'eros_popup_group', 'eros_age_title',        [ 'type' => 'string',  'default' => 'Age Verification', 'sanitize_callback' => 'sanitize_text_field' ] );
     register_setting( 'eros_popup_group', 'eros_age_message',      [ 'type' => 'string',  'default' => 'You must be 18 years of age or older to enter this site.', 'sanitize_callback' => 'wp_kses_post' ] );
     register_setting( 'eros_popup_group', 'eros_age_redirect',     [ 'type' => 'string',  'default' => 'https://www.google.com', 'sanitize_callback' => 'esc_url_raw' ] );
+    register_setting( 'eros_popup_group', 'eros_age_image',        [ 'type' => 'integer', 'default' => 0,             'sanitize_callback' => 'absint' ] );
     register_setting( 'eros_popup_group', 'eros_age_bg_color',     [ 'type' => 'string',  'default' => '#1a1a1a',     'sanitize_callback' => 'sanitize_hex_color' ] );
     register_setting( 'eros_popup_group', 'eros_age_text_color',   [ 'type' => 'string',  'default' => '#ffffff',     'sanitize_callback' => 'sanitize_hex_color' ] );
     register_setting( 'eros_popup_group', 'eros_age_yes_color',    [ 'type' => 'string',  'default' => '#28a745',     'sanitize_callback' => 'sanitize_hex_color' ] );
     register_setting( 'eros_popup_group', 'eros_age_no_color',     [ 'type' => 'string',  'default' => '#dc3545',     'sanitize_callback' => 'sanitize_hex_color' ] );
+}
+
+// ── Enqueue media uploader on settings page ────────────────────────────────
+
+add_action( 'admin_enqueue_scripts', 'eros_popup_admin_scripts' );
+function eros_popup_admin_scripts( $hook ) {
+    if ( $hook !== 'settings_page_eros-checkout-popup' ) return;
+    wp_enqueue_media();
+    wp_add_inline_script( 'jquery-core', "
+        jQuery(function($){
+            $('#eros-age-upload-btn').on('click', function(e){
+                e.preventDefault();
+                var frame = wp.media({ title: 'Select Image', button: { text: 'Use this image' }, multiple: false });
+                frame.on('select', function(){
+                    var att = frame.state().get('selection').first().toJSON();
+                    $('#eros_age_image').val(att.id);
+                    $('#eros-age-image-preview').attr('src', att.url).show();
+                    $('#eros-age-remove-btn').show();
+                });
+                frame.open();
+            });
+            $('#eros-age-remove-btn').on('click', function(e){
+                e.preventDefault();
+                $('#eros_age_image').val('0');
+                $('#eros-age-image-preview').hide();
+                $(this).hide();
+            });
+        });
+    " );
 }
 
 // ── Settings page UI ───────────────────────────────────────────────────────
@@ -74,6 +104,21 @@ function eros_popup_settings_page() {
                     <th><label for="eros_age_title">Title</label></th>
                     <td><input type="text" id="eros_age_title" name="eros_age_title" class="regular-text"
                         value="<?php echo esc_attr( get_option( 'eros_age_title', 'Age Verification' ) ); ?>" /></td>
+                </tr>
+                <tr>
+                    <th><label>Popup Image</label></th>
+                    <td>
+                        <?php
+                        $img_id  = (int) get_option( 'eros_age_image', 0 );
+                        $img_url = $img_id ? wp_get_attachment_image_url( $img_id, 'medium' ) : '';
+                        ?>
+                        <input type="hidden" id="eros_age_image" name="eros_age_image" value="<?php echo $img_id; ?>" />
+                        <img id="eros-age-image-preview" src="<?php echo esc_url( $img_url ); ?>"
+                            style="max-width:160px;max-height:120px;display:<?php echo $img_url ? 'block' : 'none'; ?>;margin-bottom:8px;border-radius:4px;" />
+                        <button type="button" id="eros-age-upload-btn" class="button">Choose Image</button>
+                        <button type="button" id="eros-age-remove-btn" class="button" style="margin-left:6px;<?php echo $img_url ? '' : 'display:none;'; ?>">Remove</button>
+                        <p class="description">Displays at the top of the age gate popup (logo, badge, etc.).</p>
+                    </td>
                 </tr>
                 <tr>
                     <th><label for="eros_age_message">Message</label></th>
@@ -180,6 +225,8 @@ function eros_age_gate() {
     $color    = sanitize_hex_color( get_option( 'eros_age_text_color', '#ffffff' ) );
     $yes_bg   = sanitize_hex_color( get_option( 'eros_age_yes_color',  '#28a745' ) );
     $no_bg    = sanitize_hex_color( get_option( 'eros_age_no_color',   '#dc3545' ) );
+    $img_id   = (int) get_option( 'eros_age_image', 0 );
+    $img_url  = $img_id ? wp_get_attachment_image_url( $img_id, 'medium' ) : '';
     ?>
     <div id="eros-age-overlay" style="
         display:flex;position:fixed;inset:0;
@@ -194,6 +241,10 @@ function eros_age_gate() {
             box-shadow:0 8px 40px rgba(0,0,0,0.5);
             text-align:center;font-family:inherit;
         ">
+            <?php if ( $img_url ) : ?>
+                <img src="<?php echo esc_url( $img_url ); ?>" alt=""
+                    style="max-width:120px;max-height:100px;margin:0 auto 20px;display:block;border-radius:6px;" />
+            <?php endif; ?>
             <?php if ( $title ) : ?>
                 <h2 style="margin:0 0 16px;font-size:1.6em;"><?php echo $title; ?></h2>
             <?php endif; ?>
@@ -290,7 +341,7 @@ register_uninstall_hook( __FILE__, 'eros_popup_uninstall' );
 function eros_popup_uninstall() {
     $keys = [
         'eros_popup_enabled','eros_popup_title','eros_popup_message','eros_popup_bg_color','eros_popup_text_color',
-        'eros_age_enabled','eros_age_title','eros_age_message','eros_age_redirect',
+        'eros_age_enabled','eros_age_title','eros_age_message','eros_age_redirect','eros_age_image',
         'eros_age_bg_color','eros_age_text_color','eros_age_yes_color','eros_age_no_color',
     ];
     foreach ( $keys as $k ) delete_option( $k );
