@@ -223,7 +223,7 @@ function eros_age_gate() {
   </div>
  </div>
 </div>
-<script>(function(){function g(n){var m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');return m?m.pop():''}if(g('eros_age')==='1')document.getElementById('eag').style.display='none'})();function eagOk(){if(document.getElementById('eag-remember').checked){var d=new Date();d.setDate(d.getDate()+30);document.cookie='eros_age=1;expires='+d.toUTCString()+';path=/'}document.getElementById('eag').style.display='none'}</script>
+<script>(function(){function g(n){var m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');return m?m.pop():''}if(g('eros_age')==='1')document.getElementById('eag').style.display='none'})();function eagOk(){if(document.getElementById('eag-remember').checked){var d=new Date();d.setDate(d.getDate()+30);document.cookie='eros_age=1;expires='+d.toUTCString()+';path=/'}else{document.cookie='eros_age=1;path=/'}document.getElementById('eag').style.display='none'}</script>
     <?php
 }
 
