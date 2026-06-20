@@ -48,26 +48,33 @@ add_action( 'admin_enqueue_scripts', 'eros_popup_admin_scripts' );
 function eros_popup_admin_scripts( $hook ) {
     if ( $hook !== 'settings_page_eros-checkout-popup' ) return;
     wp_enqueue_media();
-    wp_add_inline_script( 'jquery-core', "
-        jQuery(function($){
-            $('#eros-age-upload-btn').on('click',function(e){
-                e.preventDefault();
-                wp.media({title:'Select Image',button:{text:'Use this image'},multiple:false})
-                  .on('select',function(){
-                      var a=this.state().get('selection').first().toJSON();
-                      $('#eros_age_image').val(a.id);
-                      $('#eros-age-image-preview').attr('src',a.url).show();
-                      $('#eros-age-remove-btn').show();
-                  }.bind(this)).open();
+    wp_enqueue_script( 'jquery' );
+    add_action( 'admin_footer', 'eros_popup_admin_footer_script' );
+}
+function eros_popup_admin_footer_script() {
+    ?>
+    <script>
+    jQuery(function($){
+        $('#eros-age-upload-btn').on('click',function(e){
+            e.preventDefault();
+            var frame=wp.media({title:'Select Image',button:{text:'Use this image'},multiple:false});
+            frame.on('select',function(){
+                var a=frame.state().get('selection').first().toJSON();
+                $('#eros_age_image').val(a.id);
+                $('#eros-age-image-preview').attr('src',a.url).css('display','block');
+                $('#eros-age-remove-btn').css('display','inline-block');
             });
-            $('#eros-age-remove-btn').on('click',function(e){
-                e.preventDefault();
-                $('#eros_age_image').val('0');
-                $('#eros-age-image-preview').hide();
-                $(this).hide();
-            });
+            frame.open();
         });
-    " );
+        $('#eros-age-remove-btn').on('click',function(e){
+            e.preventDefault();
+            $('#eros_age_image').val('0');
+            $('#eros-age-image-preview').css('display','none');
+            $(this).css('display','none');
+        });
+    });
+    </script>
+    <?php
 }
 
 // ── Settings page UI ───────────────────────────────────────────────────────
