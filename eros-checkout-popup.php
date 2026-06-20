@@ -205,19 +205,19 @@ function eros_age_gate() {
     $img_id   = (int) get_option( 'eros_age_image', 0 );
     $img_url  = $img_id ? wp_get_attachment_image_url( $img_id, 'medium' ) : '';
 
-    // Shared button style
     $btn = 'padding:11px 34px;font-size:1em;font-weight:bold;cursor:pointer;color:#fff;border:none;border-radius:6px;';
+    $box_style = "background:{$bg};color:{$fg};border-radius:10px;padding:36px 32px 28px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.5);text-align:center;color-scheme:only light;forced-color-adjust:none;";
     ?>
-<style>#eag{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;align-items:center;justify-content:center;padding:16px}#eag-box{background:<?php echo $bg ?> !important;color:<?php echo $fg ?> !important;color-scheme:only light;forced-color-adjust:none;border-radius:10px;padding:36px 32px 28px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.5);text-align:center}#eag-box *{color:<?php echo $fg ?> !important;forced-color-adjust:none}#eag-box h2{margin:0 0 14px;font-size:1.5em}#eag-btns{display:flex;gap:14px;justify-content:center;margin-top:24px}@media(prefers-color-scheme:dark){#eag-box{background:<?php echo $bg ?> !important;color:<?php echo $fg ?> !important}#eag-box *{color:<?php echo $fg ?> !important}}</style>
+<style>#eag{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;align-items:center;justify-content:center;padding:16px}</style>
 <div id="eag">
- <div id="eag-box">
+ <div style="<?php echo $box_style ?>">
   <?php if ( $img_url ) : ?><img src="<?php echo esc_url( $img_url ) ?>" alt="" style="max-width:120px;max-height:90px;margin:0 auto 18px;display:block;border-radius:4px"><?php endif; ?>
-  <?php if ( $title ) : ?><h2><?php echo $title ?></h2><?php endif; ?>
-  <?php if ( $message ) : ?><div style="margin:0 0 24px;line-height:1.7;opacity:.9"><?php echo $message ?></div><?php endif; ?>
-  <label style="display:inline-flex;align-items:center;gap:8px;margin-top:18px;font-size:.9em;cursor:pointer">
+  <?php if ( $title ) : ?><h2 style="margin:0 0 14px;font-size:1.5em;color:<?php echo $fg ?>"><?php echo $title ?></h2><?php endif; ?>
+  <?php if ( $message ) : ?><div style="margin:0 0 20px;line-height:1.7;color:<?php echo $fg ?>"><?php echo $message ?></div><?php endif; ?>
+  <label style="display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;font-size:.9em;cursor:pointer;color:<?php echo $fg ?>">
    <input type="checkbox" id="eag-remember" style="width:16px;height:16px;cursor:pointer;accent-color:<?php echo $yes ?>"> Remember me for 30 days
   </label>
-  <div id="eag-btns">
+  <div style="display:flex;gap:14px;justify-content:center">
    <button onclick="eagOk()" style="<?php echo $btn ?>background:<?php echo $yes ?>">Yes, I am 18+</button>
    <button onclick="location.href='<?php echo $redirect ?>'" style="<?php echo $btn ?>background:<?php echo $no ?>">No, Exit</button>
   </div>
@@ -240,15 +240,16 @@ function eros_checkout_popup() {
 
     $bg    = sanitize_hex_color( get_option( 'eros_popup_bg_color',   '#ffffff' ) );
     $fg    = sanitize_hex_color( get_option( 'eros_popup_text_color', '#333333' ) );
-    $close = 'document.getElementById(\'ecp\').style.display=\'none\'';
+    $close     = 'document.getElementById(\'ecp\').style.display=\'none\'';
+    $box_style = "background:{$bg};color:{$fg};border-radius:8px;padding:36px 32px 28px;max-width:480px;width:90%;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.18);text-align:center;color-scheme:only light;forced-color-adjust:none;";
     ?>
-<style>#ecp{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;align-items:center;justify-content:center}#ecp-box{background:<?php echo $bg ?> !important;color:<?php echo $fg ?> !important;color-scheme:only light;forced-color-adjust:none;border-radius:8px;padding:36px 32px 28px;max-width:480px;width:90%;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.18);text-align:center}#ecp-box *{color:<?php echo $fg ?> !important;forced-color-adjust:none}#ecp-x{position:absolute;top:10px;right:13px;background:none;border:none;font-size:22px;line-height:1;cursor:pointer}#ecp-ok{margin-top:20px;padding:10px 32px;font-size:1em;cursor:pointer;background:#333 !important;color:#fff !important;border:none;border-radius:5px;font-weight:bold}@media(prefers-color-scheme:dark){#ecp-box{background:<?php echo $bg ?> !important;color:<?php echo $fg ?> !important}#ecp-box *{color:<?php echo $fg ?> !important}}</style>
+<style>#ecp{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;align-items:center;justify-content:center}</style>
 <div id="ecp">
- <div id="ecp-box">
-  <button id="ecp-x" onclick="<?php echo $close ?>" aria-label="Close">&times;</button>
-  <?php if ( $title ) : ?><h2 style="margin:0 0 12px;font-size:1.4em"><?php echo $title ?></h2><?php endif; ?>
-  <div><?php echo $message ?></div>
-  <button id="ecp-ok" onclick="<?php echo $close ?>">OK</button>
+ <div style="<?php echo $box_style ?>">
+  <button onclick="<?php echo $close ?>" aria-label="Close" style="position:absolute;top:10px;right:13px;background:none;border:none;font-size:22px;line-height:1;cursor:pointer;color:<?php echo $fg ?>">&times;</button>
+  <?php if ( $title ) : ?><h2 style="margin:0 0 12px;font-size:1.4em;color:<?php echo $fg ?>"><?php echo $title ?></h2><?php endif; ?>
+  <div style="color:<?php echo $fg ?>"><?php echo $message ?></div>
+  <button onclick="<?php echo $close ?>" style="margin-top:20px;padding:10px 32px;font-size:1em;cursor:pointer;background:#333;color:#fff;border:none;border-radius:5px;font-weight:bold">OK</button>
  </div>
 </div>
     <?php
