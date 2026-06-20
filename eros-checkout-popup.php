@@ -84,7 +84,9 @@ function eros_popup_settings_page() {
         <form method="post" action="options.php">
             <?php settings_fields( 'eros_popup_group' ); ?>
 
-            <h2>Age Gate <span style="font-size:.75em;font-weight:normal;">(Home page)</span></h2>
+            <h2>Age Gate <span style="font-size:.75em;font-weight:normal;">(Home page)</span>
+                &nbsp;<a href="<?php echo esc_url( home_url( '/?eros_reset_age=1' ) ); ?>" target="_blank" class="button button-small">Preview / Reset Cookie</a>
+            </h2>
             <table class="form-table" role="presentation">
                 <tr>
                     <th><label for="eros_age_enabled">Enable Age Gate</label></th>
@@ -167,6 +169,16 @@ function eros_popup_settings_page() {
         </form>
     </div>
     <?php
+}
+
+// ── Reset cookie (for admin previewing) ───────────────────────────────────
+
+add_action( 'template_redirect', 'eros_age_reset_cookie' );
+function eros_age_reset_cookie() {
+    if ( ! isset( $_GET['eros_reset_age'] ) || ! current_user_can( 'manage_options' ) ) return;
+    setcookie( 'eros_age', '', time() - 3600, '/' );
+    wp_safe_redirect( home_url( '/' ) );
+    exit;
 }
 
 // ── Age gate (home page) ───────────────────────────────────────────────────
