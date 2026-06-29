@@ -207,23 +207,46 @@ function eros_age_gate() {
 
     $btn = 'padding:11px 34px;font-size:1em;font-weight:bold;cursor:pointer;color:#fff;border:none;border-radius:6px;';
     $box_style = "background:{$bg};color:{$fg};border-radius:10px;padding:36px 32px 28px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.5);text-align:center;color-scheme:only light;forced-color-adjust:none;";
+    $box_json = json_encode( $box_style );
+    $img_html = $img_url ? '<img src="'.esc_url($img_url).'" alt="" style="max-width:120px;max-height:90px;margin:0 auto 18px;display:block;border-radius:4px">' : '';
+    $ttl_html = $title   ? '<h2 style="margin:0 0 14px;font-size:1.5em;color:'.$fg.'">'.$title.'</h2>' : '';
+    $msg_html = $message ? '<div style="margin:0 0 20px;line-height:1.7;color:'.$fg.'">'.$message.'</div>' : '';
     ?>
-<style>#eag{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;min-height:100vh;background:rgba(0,0,0,.85);z-index:999999;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}</style>
-<div id="eag">
- <div style="<?php echo $box_style ?>">
-  <?php if ( $img_url ) : ?><img src="<?php echo esc_url( $img_url ) ?>" alt="" style="max-width:120px;max-height:90px;margin:0 auto 18px;display:block;border-radius:4px"><?php endif; ?>
-  <?php if ( $title ) : ?><h2 style="margin:0 0 14px;font-size:1.5em;color:<?php echo $fg ?>"><?php echo $title ?></h2><?php endif; ?>
-  <?php if ( $message ) : ?><div style="margin:0 0 20px;line-height:1.7;color:<?php echo $fg ?>"><?php echo $message ?></div><?php endif; ?>
-  <label style="display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;font-size:.9em;cursor:pointer;color:<?php echo $fg ?>">
-   <input type="checkbox" id="eag-remember" style="width:16px;height:16px;cursor:pointer;accent-color:<?php echo $yes ?>"> Remember me for 30 days
-  </label>
-  <div style="display:flex;gap:14px;justify-content:center">
-   <button onclick="eagOk()" style="<?php echo $btn ?>background:<?php echo $yes ?>">Yes, I am 18+</button>
-   <button onclick="location.href='<?php echo $redirect ?>'" style="<?php echo $btn ?>background:<?php echo $no ?>">No, Exit</button>
-  </div>
- </div>
-</div>
-<script>(function(){function g(n){var m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');return m?m.pop():''}if(g('eros_age')==='1')document.getElementById('eag').style.display='none'})();function eagOk(){if(document.getElementById('eag-remember').checked){var d=new Date();d.setDate(d.getDate()+30);document.cookie='eros_age=1;expires='+d.toUTCString()+';path=/'}else{document.cookie='eros_age=1;path=/'}document.getElementById('eag').style.display='none'}</script>
+<script>
+(function(){
+    function getCookie(n){var m=document.cookie.match('(^|;)\\s*'+n+'\\s*=\\s*([^;]+)');return m?m.pop():'';}
+    if(getCookie('eros_age')==='1') return;
+
+    // Build overlay and append directly to body so no theme element can trap it
+    var ov=document.createElement('div');
+    ov.id='eag';
+    ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box';
+
+    var box=document.createElement('div');
+    box.style.cssText=<?php echo $box_json ?>;
+    box.innerHTML=
+        <?php echo json_encode( $img_html.$ttl_html.$msg_html ); ?>+
+        '<label style="display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;font-size:.9em;cursor:pointer;color:<?php echo $fg ?>">'
+        +'<input type="checkbox" id="eag-remember" style="width:16px;height:16px;cursor:pointer;accent-color:<?php echo $yes ?>"> Remember me for 30 days</label>'
+        +'<div style="display:flex;gap:14px;justify-content:center">'
+        +'<button onclick="eagOk()" style="<?php echo addslashes($btn) ?>background:<?php echo $yes ?>">Yes, I am 18+</button>'
+        +'<button onclick="location.href=\'<?php echo $redirect ?>\'" style="<?php echo addslashes($btn) ?>background:<?php echo $no ?>">No, Exit</button>'
+        +'</div>';
+
+    ov.appendChild(box);
+    document.body.appendChild(ov);
+})();
+
+function eagOk(){
+    if(document.getElementById('eag-remember').checked){
+        var d=new Date();d.setDate(d.getDate()+30);
+        document.cookie='eros_age=1;expires='+d.toUTCString()+';path=/';
+    } else {
+        document.cookie='eros_age=1;path=/';
+    }
+    document.getElementById('eag').style.display='none';
+}
+</script>
     <?php
 }
 
@@ -241,17 +264,25 @@ function eros_checkout_popup() {
     $bg    = sanitize_hex_color( get_option( 'eros_popup_bg_color',   '#ffffff' ) );
     $fg    = sanitize_hex_color( get_option( 'eros_popup_text_color', '#333333' ) );
     $close     = 'document.getElementById(\'ecp\').style.display=\'none\'';
-    $box_style = "background:{$bg};color:{$fg};border-radius:8px;padding:36px 32px 28px;max-width:480px;width:90%;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.18);text-align:center;color-scheme:only light;forced-color-adjust:none;";
+    $box_style = "background:{$bg};color:{$fg};border-radius:8px;padding:36px 32px 28px;max-width:480px;width:90%;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.18);text-align:center;color-scheme:only light;forced-color-adjust:none;box-sizing:border-box;";
+    $ttl_html  = $title ? '<h2 style="margin:0 0 12px;font-size:1.4em;color:'.$fg.'">'.$title.'</h2>' : '';
+    $msg_html  = '<div style="color:'.$fg.'">'.$message.'</div>';
     ?>
-<style>#ecp{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;min-height:100vh;background:rgba(0,0,0,.55);z-index:999999;align-items:center;justify-content:center;box-sizing:border-box}</style>
-<div id="ecp">
- <div style="<?php echo $box_style ?>">
-  <button onclick="<?php echo $close ?>" aria-label="Close" style="position:absolute;top:10px;right:13px;background:none;border:none;font-size:22px;line-height:1;cursor:pointer;color:<?php echo $fg ?>">&times;</button>
-  <?php if ( $title ) : ?><h2 style="margin:0 0 12px;font-size:1.4em;color:<?php echo $fg ?>"><?php echo $title ?></h2><?php endif; ?>
-  <div style="color:<?php echo $fg ?>"><?php echo $message ?></div>
-  <button onclick="<?php echo $close ?>" style="margin-top:20px;padding:10px 32px;font-size:1em;cursor:pointer;background:#333;color:#fff;border:none;border-radius:5px;font-weight:bold">OK</button>
- </div>
-</div>
+<script>
+(function(){
+    var ov=document.createElement('div');
+    ov.id='ecp';
+    ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);z-index:2147483647;display:flex;align-items:center;justify-content:center;box-sizing:border-box';
+    var box=document.createElement('div');
+    box.style.cssText=<?php echo json_encode($box_style); ?>;
+    box.innerHTML=
+        '<button onclick="document.getElementById(\'ecp\').style.display=\'none\'" aria-label="Close" style="position:absolute;top:10px;right:13px;background:none;border:none;font-size:22px;line-height:1;cursor:pointer;color:<?php echo $fg ?>">&times;</button>'
+        +<?php echo json_encode($ttl_html.$msg_html); ?>
+        +'<br><button onclick="document.getElementById(\'ecp\').style.display=\'none\'" style="margin-top:20px;padding:10px 32px;font-size:1em;cursor:pointer;background:#333;color:#fff;border:none;border-radius:5px;font-weight:bold">OK</button>';
+    ov.appendChild(box);
+    document.body.appendChild(ov);
+})();
+</script>
     <?php
 }
 
