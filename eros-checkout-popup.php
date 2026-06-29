@@ -208,7 +208,7 @@ function eros_age_gate() {
     $btn = 'padding:11px 34px;font-size:1em;font-weight:bold;cursor:pointer;color:#fff;border:none;border-radius:6px;';
     $box_style = "background:{$bg};color:{$fg};border-radius:10px;padding:36px 32px 28px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.5);text-align:center;color-scheme:only light;forced-color-adjust:none;";
     ?>
-<style>#eag{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;align-items:center;justify-content:center;padding:16px}</style>
+<style>#eag{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;min-height:100vh;background:rgba(0,0,0,.85);z-index:999999;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}</style>
 <div id="eag">
  <div style="<?php echo $box_style ?>">
   <?php if ( $img_url ) : ?><img src="<?php echo esc_url( $img_url ) ?>" alt="" style="max-width:120px;max-height:90px;margin:0 auto 18px;display:block;border-radius:4px"><?php endif; ?>
@@ -243,7 +243,7 @@ function eros_checkout_popup() {
     $close     = 'document.getElementById(\'ecp\').style.display=\'none\'';
     $box_style = "background:{$bg};color:{$fg};border-radius:8px;padding:36px 32px 28px;max-width:480px;width:90%;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.18);text-align:center;color-scheme:only light;forced-color-adjust:none;";
     ?>
-<style>#ecp{display:flex;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:99999;align-items:center;justify-content:center}</style>
+<style>#ecp{display:flex;position:fixed;top:0;left:0;width:100%;height:100%;min-height:100vh;background:rgba(0,0,0,.55);z-index:999999;align-items:center;justify-content:center;box-sizing:border-box}</style>
 <div id="ecp">
  <div style="<?php echo $box_style ?>">
   <button onclick="<?php echo $close ?>" aria-label="Close" style="position:absolute;top:10px;right:13px;background:none;border:none;font-size:22px;line-height:1;cursor:pointer;color:<?php echo $fg ?>">&times;</button>
